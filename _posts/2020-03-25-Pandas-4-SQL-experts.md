@@ -7,6 +7,31 @@ title: Pandas Reference for SQL Experts
 ---
 # Pandas Reference for SQL Experts
 
+##  Table of Contents
+- [DataFrame](#dataframe)
+  - [Creating a DataFrame](#creating-a-dataframe)
+- [Datatypes & conversions](#datatypes--conversions)
+   - [Get data types for each column in a data frame](#get-data-types-for-each-column-in-a-data-frame) | [Convert string/object to numeric](#convert-stringobject-to-numeric) | [Other conversions](#other-conversions)
+- [Select columns](#select-columns)
+   - [Simple select](#simple-select) | [Select from multi-level index using tuples](#select-from-multi-level-index-using-tuples) | [Creating multi-level index using tuples](#creating-multi-level-index-using-tuples) | [Programmatically select columns](#programmatically-select-columns) | [Get distribution of values in a column](#get-distribution-of-values-in-a-column)
+- [Filter rows](#filter-rows)
+- [Sort](#sort)
+   - [Sort rows](#sort-rows) | [Sort columns](#sort-columns)
+- [Group by](#group-by)
+   - [Group by example](#group-by-example) | [Aggregate functions](#aggregate-functions) | [Transform functions](#transform-functions) | [Group Filters (SQL:having)](#group-filters-sqlhaving) | [Simple Cumulative](#simple-cumulative) | [Expanding Window](#expanding-window) | [Rolling Window](#rolling-window) | [Lead/Lag](#leadlag) | [Resample](#resample)
+- [Joins](#joins)
+   - [Simple join](#simple-join) | [Concat columns](#concat-columns) | [SQL like join](#sql-like-join)
+- [Formatting](#formatting)
+   - [Numeric formating](#numeric-formating) | [Gradient Background](#gradient-background) | [Bars](#bars) | [Nesting multiple styles](#nesting-multiple-styles)
+- [Transform](#transform)
+   - [Swap level & Axis](#swap-level--axis) | [Map](#map) | [Apply](#apply) | [Flatten multi-level column index](#flatten-multi-level-column-index) | [Pivot index levels to column](#pivot-index-levels-to-column) | [Binning based on value (cut)](#binning-based-on-value-cut) | [Binning based on records (qcut)](#binning-based-on-records-qcut)
+- [Add/Remove rows & columns](#addremove-rows--columns)
+   - [Add Rows](#add-rows) | [Add columns](#add-columns) | [Remove rows](#remove-rows) | [Remove columns](#remove-columns) | [Remove a level from multi-level index](#remove-a-level-from-multi-level-index)
+- [Visualizations](#visualizations)
+   - [Simple charts](#simple-charts) | [Histogram](#histogram) | [Boxplot for each group](#boxplot-for-each-group) | [Scatter Matrix](#scatter-matrix) | [Bootstrap Plot](#bootstrap-plot)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
 ##  DataFrame 
 You can think of DataFrame like a spreadsheet or SQL table. It is the most commonly used pandas object. 
 Rows are referred to as axis 0 and columns as axis 1 and each axis can have multiple levels (which is not common). 
