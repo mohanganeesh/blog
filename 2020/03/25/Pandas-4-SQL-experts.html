@@ -1,0 +1,343 @@
+<h2 id="dataframe">DataFrame</h2>
+<p>You can think of DataFrame like a spreadsheet or SQL table. It is the most commonly used pandas object. 
+Rows are referred to as axis 0 and columns as axis 1 and each axis can have multiple levels (which is not common).</p>
+
+<h6 id="creating-a-dataframe">Creating a DataFrame</h6>
+<p>Below example is to create sample DataFrame for examples on this page</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="s">'apple'</span><span class="p">,</span><span class="s">'fruit'</span><span class="p">,</span><span class="mi">85</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="c1"># Natural line breaking allowed for code within parentheses()
+</span>                      <span class="p">[</span><span class="s">'orange'</span><span class="p">,</span><span class="s">'fruit'</span><span class="p">,</span><span class="mi">68</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+                      <span class="p">[</span><span class="s">'banana'</span><span class="p">,</span><span class="s">'fruit'</span><span class="p">,</span><span class="mi">69</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span>
+                      <span class="p">[</span><span class="s">'beetroot'</span><span class="p">,</span><span class="s">'vegetable'</span><span class="p">,</span><span class="mi">68</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+                      <span class="p">[</span><span class="s">'carrot'</span><span class="p">,</span><span class="s">'vegetable'</span><span class="p">,</span><span class="mi">45</span><span class="p">,</span><span class="mi">2</span><span class="p">]],</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">'name'</span><span class="p">,</span><span class="s">'type'</span><span class="p">,</span><span class="s">'health_index'</span><span class="p">,</span><span class="s">'cost_index'</span><span class="p">])</span>
+<span class="n">df</span> <span class="c1"># prints the dataframe
+</span></code></pre></div></div>
+<p>Result:
+{F34356671}</p>
+<h2 id="datatypes--conversions">Datatypes &amp; conversions</h2>
+<p>Available datatypes: object (string, lists, dict, tuple and other complex objects), int64, float64, datetime64</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#string
+</span><span class="n">s</span><span class="o">=</span><span class="s">'hello world!'</span> <span class="c1">#s[0:2] returns 'he', s[:-1] returns 'hello world'
+</span>
+<span class="c1">#list
+</span><span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span> <span class="c1"># a[0] gets first element; a[-1] gets last element. Lists elements can be added or removed with a.append(elem) or a.pop(elem)
+</span>
+<span class="c1">#dict
+</span><span class="n">d</span><span class="o">=</span><span class="p">{</span><span class="s">'movie_name'</span><span class="p">:</span><span class="s">'star wars'</span><span class="p">,</span> <span class="s">'rating'</span><span class="p">:</span><span class="mi">5</span><span class="p">}</span> <span class="c1"># d['movie_name'] gets 'star wars'. Dict elements can be added or removed using d['release_year']=1977 or del d['rating']
+</span>
+<span class="c1">#tuple
+</span><span class="n">t</span><span class="o">=</span><span class="p">(</span><span class="s">'apple'</span><span class="p">,</span><span class="s">'iphone'</span><span class="p">,</span><span class="s">'7 plus'</span><span class="p">)</span> <span class="c1"># similar to list, t[0] gets first element. Tuples are immutable. cannot add/change values
+</span>
+<span class="c1">#complex objects (combination of two or more of above)
+</span><span class="n">c</span><span class="o">=</span><span class="p">{</span><span class="s">'product'</span><span class="p">:(</span><span class="s">'apple'</span><span class="p">,</span><span class="s">'iphone'</span><span class="p">,</span><span class="s">'7 plus'</span><span class="p">),</span><span class="s">'features'</span><span class="p">:[</span><span class="s">'bluetooth'</span><span class="p">,</span><span class="s">'wifi'</span><span class="p">]}</span>
+
+</code></pre></div></div>
+<h6 id="get-data-types-for-each-column-in-a-data-frame">Get data types for each column in a data frame</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">dtypes</span> <span class="c1"># gives the number of columns by various data types in the dataframe df
+</span></code></pre></div></div>
+<h6 id="convert-stringobject-to-numeric">Convert string/object to numeric</h6>
+<p>Pandas auto-detects data type. Usually numeric column with nulls or few string values are treated as object. This piece of code will replace them to 0 and convert to int</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">ID</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s">'coerce'</span><span class="p">)</span>\ <span class="c1"># coerce converts non numeric value columns to NaN
+</span>            <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>\ <span class="c1"># replaces NaN to 0
+</span>            <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>  <span class="c1"># type conversion
+</span></code></pre></div></div>
+<h6 id="other-conversions">Other conversions</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">dict</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="c1"># converts object to dict
+</span><span class="nb">list</span><span class="p">(</span><span class="n">tup</span><span class="p">)</span> <span class="c1"># converts tuple to list
+</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span> <span class="c1"># converts list to tuple
+</span></code></pre></div></div>
+
+<h2 id="select-columns">Select columns</h2>
+<h6 id="simple-select">Simple select</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="n">col1</span><span class="p">]</span> <span class="c1"># Returns series 
+</span>
+<span class="n">df</span><span class="p">[[</span><span class="n">col1</span><span class="p">]]</span> <span class="c1"># Returns  dataframe with 1 col
+</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="n">col1</span><span class="p">]]</span> <span class="c1">#Same as above, : refers to all rows
+</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">0</span><span class="p">]]</span> <span class="c1"># Returns dataframe with 1st col
+</span>
+<span class="n">df</span><span class="p">[[</span><span class="n">col1</span><span class="p">,</span><span class="n">col2</span><span class="p">]]</span> <span class="c1"># Returns dataframe with 2 cols
+</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="n">col1</span><span class="p">,</span><span class="n">col2</span><span class="p">]]</span> <span class="c1"># Same as above
+</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]]</span> <span class="c1">#Retuns dataframe with first 3 columns (0,1,2)
+</span></code></pre></div></div>
+<p>more creative selects from a list <a href="https://teamtreehouse.com/community/how-do-i-get-the-first-4-and-last-4-items-of-a-list">here</a></p>
+<h6 id="select-from-multi-level-index-using-tuples">Select from multi-level index using tuples</h6>
+<p>The tuples () can have 2 or more levels</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[(</span><span class="s">'label'</span><span class="p">,</span><span class="s">'count'</span><span class="p">),(</span><span class="s">'label'</span><span class="p">,</span><span class="s">'mean'</span><span class="p">)]</span> <span class="c1"># selects 2 columns (first under tree label-&gt;count and second label-&gt;mean)
+</span></code></pre></div></div>
+
+<h6 id="creating-multi-level-index-using-tuples">Creating multi-level index using tuples</h6>
+<p>The tuples () can have 2 or more levels</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">([(</span><span class="s">'Parent1'</span><span class="p">,</span> <span class="s">'Child1'</span><span class="p">),</span> <span class="p">(</span><span class="s">'Parent1'</span><span class="p">,</span> <span class="s">'Child2'</span><span class="p">)],</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s">'Parent'</span><span class="p">,</span> <span class="s">'Child'</span><span class="p">])</span>
+</code></pre></div></div>
+<p>Alternatively, you can construct a list and convert to tuple using zip:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">arrays</span> <span class="o">=</span> <span class="p">[[</span><span class="s">'Parent1'</span><span class="p">,</span><span class="s">'Parent1'</span><span class="p">],</span>
+                      <span class="p">[</span><span class="s">'Child1'</span><span class="p">,</span> <span class="s">'Child2'</span><span class="p">]]</span>
+<span class="n">tuples</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">arrays</span><span class="p">))</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="n">tuples</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s">'Parent'</span><span class="p">,</span> <span class="s">'Child'</span><span class="p">])</span>
+</code></pre></div></div>
+<h6 id="programmatically-select-columns">Programmatically select columns</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span> <span class="k">if</span> <span class="s">'prob'</span> <span class="ow">in</span> <span class="n">col</span><span class="p">]]</span> <span class="c1"># selects all columns containing 'prob' in column name
+</span></code></pre></div></div>
+
+<h6 id="get-distribution-of-values-in-a-column">Get distribution of values in a column</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">health_index</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span> <span class="c1"># record count for each val
+</span><span class="n">df</span><span class="o">.</span><span class="n">health_index</span><span class="o">.</span><span class="n">value_counts</span><span class="p">(</span><span class="n">normalize</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c1"># % distribution
+</span></code></pre></div></div>
+<h2 id="filter-rows">Filter rows</h2>
+<p>Filters internally use masking. You can just run the filter inside to see the mask data frame.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">col1</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s">'apple'</span><span class="p">,</span><span class="s">'orange'</span><span class="p">]),:]</span> <span class="c1"># Returns all records where col1 is 'apple' or 'orange'
+</span><span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">df</span><span class="o">.</span><span class="n">col1</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s">'apple'</span><span class="p">,</span><span class="s">'orange'</span><span class="p">]),:]</span>  <span class="c1"># Returns all records where col1 is not 'apple' or 'orange'
+</span>
+</code></pre></div></div>
+
+<h2 id="sort">Sort</h2>
+<h6 id="sort-rows">Sort rows</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s">'trips_per_user'</span><span class="p">)</span> <span class="c1">#Sorts rows based on values in trips_per_user
+</span></code></pre></div></div>
+<h6 id="sort-columns">Sort columns</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Sorts columns by their names. axis 1 refers to columns. level 0 is the highest/default level
+</span></code></pre></div></div>
+<h2 id="group-by">Group by</h2>
+
+<h6 id="group-by-example">Group by example</h6>
+<p>groupby returns a dict object with group name and group data frame. This can be iterated thru manually or summarized using the functions below. 
+NULL value (NA, NaT) will be ignored and will not form a group.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'email_domain'</span><span class="p">)</span> 
+<span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">column_list</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Tip: You could also group by on a field which is not in the selector (even from another dataframe as long as indexes match up)</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'cost_index'</span><span class="p">]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="nb">type</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+
+</code></pre></div></div>
+<p>Tip: Group by fields are added to index in the resulting dataframe. Use reset_index() to move the index to columns</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">column_list</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+</code></pre></div></div>
+
+<h6 id="aggregate-functions">Aggregate functions</h6>
+<p>apply a common operation on all non grouped columns 
+If an aggregate function cannot be applied on a column eg.string, these nuisance columns will be silently ignored</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="c1"># count
+</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span> <span class="c1"># supports prod, min, max, mean, median, first, last, std, var
+</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c1"># returns first 5 rows in each group by order as in dataframe. also supports tail(n), nlargest(n), nsmallest(n) 
+</span><span class="o">.</span><span class="n">nth</span><span class="p">([</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># returns 4th element from the top and 1st element from the bottom
+</span>
+</code></pre></div></div>
+<p>apply various operations on each of the columns</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s">'col1'</span><span class="p">:[</span><span class="s">'mean'</span><span class="p">,</span><span class="s">'count'</span><span class="p">],</span><span class="s">'col2'</span><span class="p">:[</span><span class="s">'var'</span><span class="p">]})</span>
+</code></pre></div></div>
+
+<p>% of total within groups</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'health_index_</span><span class="si">%</span><span class="s">oftotal'</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">health_index</span><span class="o">/</span><span class="n">df</span><span class="o">.</span><span class="n">health_index</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+</code></pre></div></div>
+<h6 id="transform-functions">Transform functions</h6>
+<p>Transform function is similar to window aggregate functions on the entire window. It aggregates the data and assigns back to dataset similar to original and preserves index</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'type'</span><span class="p">)[</span><span class="s">'health_index'</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s">'sum'</span><span class="p">)</span> <span class="c1"># supports all aggregate functions like min, max, mean, std, var
+</span></code></pre></div></div>
+
+<h6 id="group-filters-sqlhaving">Group Filters (SQL:having)</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">dff</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'B'</span><span class="p">)</span><span class="o">.</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s">'C'</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="c1">#Refer Lambda functions
+</span></code></pre></div></div>
+<h2 id="window-aggregate-functions">Window aggregate functions</h2>
+<h6 id="overall">Overall</h6>
+<p>Applying math function on a series aggregates to the entire group. When applied on group by, returns aggregate value for each group</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">health_index</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+</code></pre></div></div>
+<p>We could use this to divide on individual values to create % of total columns</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'health_index_</span><span class="si">%</span><span class="s">oftotal'</span><span class="p">]</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">health_index</span><span class="o">/</span><span class="n">df</span><span class="o">.</span><span class="n">health_index</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h6 id="simple-cumulative">Simple Cumulative</h6>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">cost_index</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">asending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="c1"># similar functions: cummin, cummax, cumprod
+</span></code></pre></div></div>
+<h6 id="expanding-window">Expanding Window</h6>
+<p>Another way of achieving cumulative sum:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">cost_index</span><span class="o">.</span><span class="n">expanding</span><span class="p">()</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+</code></pre></div></div>
+<h6 id="rolling-window">Rolling Window</h6>
+<p>Similar to expanding, rolling window is also supported. Here is how to do a rolling sum of current record and previous (n-1) records</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">cost_index</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+</code></pre></div></div>
+<h6 id="leadlag">Lead/Lag</h6>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">cost_index</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Get value from 2 records before
+</span><span class="n">df</span><span class="o">.</span><span class="n">cost_index</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># Get value from next record
+</span></code></pre></div></div>
+<h6 id="resample">Resample</h6>
+<p>Used for time series grouping to create bins of equi-split time intervals</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Get another example!
+</span><span class="n">df_re</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'group'</span><span class="p">)</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s">'1D'</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>To check if window aggregate functions are working fine, validate alongside your original dataset like below:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span><span class="n">df</span><span class="o">.</span><span class="n">cost_index</span><span class="o">.</span><span class="n">rolling</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">min_periods</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Note: No exact equivalent of <code class="highlighter-rouge">rows between n preceding and n following</code> found in pandas. Please update when you find it</p>
+
+<h2 id="joins">Joins</h2>
+<h6 id="simple-join">Simple join</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">train_X</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="n">y_col</span><span class="p">])</span> <span class="c1"># joins on index. Returns dataframe with all columns from train_X &amp; y_col from train
+</span></code></pre></div></div>
+<h6 id="concat-columns">Concat columns</h6>
+<p>concat on axis 1 is like join based on index</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">df4</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+<h6 id="sql-like-join">SQL like join</h6>
+<p>SQL like join can be achieved with merge:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s">'inner'</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+         <span class="n">left_index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+         <span class="n">suffixes</span><span class="o">=</span><span class="p">(</span><span class="s">'_x'</span><span class="p">,</span> <span class="s">'_y'</span><span class="p">),</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">indicator</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+         <span class="n">validate</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Aggregate and join back to original dataset</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'month'</span><span class="p">)[</span><span class="s">'A'</span><span class="p">]</span><span class="o">.</span><span class="nb">sum</span><span class="p">(),</span> <span class="n">on</span><span class="o">=</span><span class="s">'month'</span><span class="p">,</span> <span class="n">rsuffix</span><span class="o">=</span><span class="s">'_r'</span><span class="p">)</span> <span class="c1"># aggregates column A to month level and adds that to each of the records in df and is returned
+</span></code></pre></div></div>
+<h2 id="formatting">Formatting</h2>
+<h6 id="numeric-formating">Numeric formating</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="nb">format</span><span class="p">({</span><span class="s">'B'</span><span class="p">:</span> <span class="s">'{:0&lt;4.0f}'</span><span class="p">,</span> <span class="s">'D'</span><span class="p">:</span> <span class="s">'{:+.2</span><span class="si">%</span><span class="s">}'</span><span class="p">},</span><span class="s">'C'</span><span class="p">:</span><span class="s">'±{:.2f}'</span><span class="p">)</span> 
+<span class="c1"># {:+.2%} is for % with 2 decimals
+# ±{:.2f} is for 2 decimals with a +- sign in the front, 
+# {:0&lt;4.0f} 0 in front fills zero, &lt; for is left aligned, 4 digits (including - sign) before decimal and no value after decimal
+</span></code></pre></div></div>
+<p>Numeric format guides: <a href="https://docs.python.org/3/library/string.html#format-specification-mini-language">here</a></p>
+<h6 id="gradient-background">Gradient Background</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cm</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">light_palette</span><span class="p">(</span><span class="s">'green'</span><span class="p">,</span> <span class="n">as_cmap</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">background_gradient</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="n">cm</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'B'</span><span class="p">,</span> <span class="s">'C'</span><span class="p">,</span> <span class="s">'D’]) # applies heatmap for columns B, C, D</span><span class="err">
+</span></code></pre></div></div>
+<h6 id="bars">Bars</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'B'</span><span class="p">])</span> <span class="c1"># applies bars to column B
+</span></code></pre></div></div>
+
+<h6 id="nesting-multiple-styles">Nesting multiple styles</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="nb">format</span><span class="p">({</span><span class="s">'B'</span><span class="p">:</span> <span class="s">'{:0&lt;4.0f}'</span><span class="p">,</span> <span class="s">'D'</span><span class="p">:</span> <span class="s">'{:+.2f}'</span><span class="p">})</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'B'</span><span class="p">])</span> 
+</code></pre></div></div>
+<p>More styles: <a href="https://pandas.pydata.org/pandas-docs/version/0.18.1/style.html">here</a></p>
+
+<h2 id="transform">Transform</h2>
+<h6 id="swap-level--axis">Swap level &amp; Axis</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">swaplevel</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">j</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># swaps first 2 levels (0 &amp; 1) on columns (axis 1)
+</span><span class="n">df</span><span class="o">.</span><span class="n">swapindex</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># swaps first 2 index columns
+</span></code></pre></div></div>
+
+<h6 id="map">Map</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'housing'</span><span class="p">]</span><span class="o">.</span><span class="nb">map</span><span class="p">({</span><span class="s">'yes'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'no'</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span> <span class="c1"># changes values 'yes' to 1 and 'no' to 0
+</span></code></pre></div></div>
+<h6 id="apply">Apply</h6>
+
+<p>using lambda functions for column transformations (entire column is passed as series to lambda function)</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'delayed'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s">'arr_delay'</span><span class="p">]</span><span class="o">.</span><span class="nb">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">col</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+<p>using lambda function across columns using axis=1</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="p">[</span><span class="s">'Value'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="nb">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">my_test</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">'a'</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s">'c'</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+<h6 id="flatten-multi-level-column-index">Flatten multi-level column index</h6>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> 
+</code></pre></div></div>
+<h6 id="pivot-index-levels-to-column">Pivot index levels to column</h6>
+<p>This is like a pivot table operation. Creates N columns based on N unique values in the row index. If you need to pivot on a non-index column, first add that to index using  pd.set_index(col, append=True)</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span> <span class="c1"># This unstacks the right most index. To be more specific use order or name like df.unstack(0) or df.unstack('Year')
+</span>
+<span class="c1"># Vice versa: to pivot a column level to row index
+</span><span class="n">df</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h6 id="binning-based-on-value-cut">Binning based on value (cut)</h6>
+<p>cut splits a continuous data into equi-distant bins. Bins are skewed when outliers in the data</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span> <span class="mi">4</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="c1"># Output: array([0, 0, 1, 1, 2, 2, 3, 3])
+</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">cut</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">20</span><span class="p">],</span> <span class="mi">4</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="c1"># Output: array([0, 0, 0, 0, 0, 1, 1, 3])
+</span></code></pre></div></div>
+
+<h6 id="binning-based-on-records-qcut">Binning based on records (qcut)</h6>
+<p>qcut splits any data into equi-sized bins</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">20</span><span class="p">],</span> <span class="mi">4</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="c1"># Output: array([0, 0, 1, 1, 2, 2, 3, 3])
+</span></code></pre></div></div>
+
+<p>this can be used in a group by to get decile level metrics</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">col1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</code></pre></div></div>
+<h2 id="addremove-rows--columns">Add/Remove rows &amp; columns</h2>
+<h6 id="add-rows">Add Rows</h6>
+<p>Adding 1 row manually</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">'name'</span><span class="p">:</span><span class="s">'banana'</span><span class="p">,</span> <span class="s">'type'</span><span class="p">:</span><span class="s">'fruit'</span><span class="p">,</span> <span class="s">'health_index'</span><span class="p">:</span><span class="mi">88</span><span class="p">,</span> <span class="s">'cost_index'</span><span class="p">:</span><span class="mi">98</span><span class="p">},</span><span class="n">ignore_index</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c1"># New index sequence will be created when ignore_index is True. Else will use original index and could result in duplicate indexes
+</span></code></pre></div></div>
+<p>Adding rows from another dataframe with matching columns (new columns will be created for non-matching columns. Missing columns will be NULLs</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_df</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h6 id="add-columns">Add columns</h6>
+<p>to add a column manually</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="s">'new_col'</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+
+<span class="c1"># Alternate approach
+</span><span class="n">df</span><span class="p">[</span><span class="s">'new_col'</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+
+<span class="c1"># Add column dynamically creating a column based on a logic on existing column
+</span><span class="n">df</span><span class="p">[</span><span class="s">'new_col'</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span> <span class="k">if</span> <span class="n">x</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">col</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>to create a new data frame with additional column</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span><span class="n">df</span><span class="o">.</span><span class="n">cost_index</span><span class="o">/</span><span class="mi">2</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># this can also be used to create a dataframe from 2 or more series
+</span></code></pre></div></div>
+<h6 id="remove-rows">Remove rows</h6>
+<p>Drop using index</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># removes rows with index 0 &amp; 1
+</span></code></pre></div></div>
+
+<h6 id="remove-columns">Remove columns</h6>
+<p>drop using column names</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s">'cost_index'</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> 
+</code></pre></div></div>
+
+<h6 id="remove-a-level-from-multi-level-index">Remove a level from multi-level index</h6>
+<p>drop the highest level from multi-level column index</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">droplevel</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>drop a level from multi-level row index</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="visualizations">Visualizations</h2>
+
+<h6 id="simple-charts">Simple charts</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="o">.</span><span class="n">cost_index</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s">'bar'</span><span class="p">)</span> <span class="c1"># kinds: barh, hist, box, kde, density, area, scatter, hexbin, pie
+</span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">subplots</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="c1"># Layout -1 is to infer the number of columns based on data
+</span></code></pre></div></div>
+<h6 id="histogram">Histogram</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span> 
+<span class="n">df</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span><span class="mi">30</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h6 id="boxplot-for-each-group">Boxplot for each group</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span> 
+<span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'type'</span><span class="p">)</span><span class="o">.</span><span class="n">boxplot</span><span class="p">()</span>
+</code></pre></div></div>
+<h6 id="scatter-matrix">Scatter Matrix</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">scatter_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="s">'kde'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h6 id="bootstrap-plot">Bootstrap Plot</h6>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bootstrap_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s">'grey'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>More vizualizations <a href="https://pandas.pydata.org/pandas-docs/stable/visualization.html">here</a></p>
+
+<p>Nesting them all 
+Use \ for continuity on next line</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="p">[[</span><span class="s">'email_domain'</span><span class="p">,</span><span class="n">y_col</span><span class="p">]]</span><span class="o">.</span>\
+	<span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s">'email_domain'</span><span class="p">)</span>\
+	<span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s">'label'</span><span class="p">:[</span><span class="s">'mean'</span><span class="p">,</span><span class="s">'count'</span><span class="p">]})</span>\
+	<span class="o">.</span><span class="n">sort_values</span><span class="p">([(</span><span class="s">'label'</span><span class="p">,</span><span class="s">'count'</span><span class="p">),(</span><span class="s">'label'</span><span class="p">,</span><span class="s">'mean'</span><span class="p">)],</span> <span class="n">ascending</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>\
+        <span class="o">.</span><span class="n">style</span>\
+            <span class="o">.</span><span class="nb">format</span><span class="p">({</span><span class="s">'B'</span><span class="p">:</span> <span class="s">'{:0&lt;4.0f}'</span><span class="p">,</span> <span class="s">'D'</span><span class="p">:</span> <span class="s">'{:+.2f}'</span><span class="p">})</span>\
+            <span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s">'B'</span><span class="p">])</span>
+</code></pre></div></div>
