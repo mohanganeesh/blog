@@ -1,0 +1,283 @@
+<h1 id="hivepresto-function-mapping">Hive&lt;&gt;Presto function mapping</h1>
+
+<ul>
+  <li><a href="#-cyclone--array-functions">:cyclone: Array functions</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#explode-array">Explode Array</a></td>
+              <td><a href="#array-size">Array Size</a></td>
+              <td><a href="#array-to-string">Array to String</a></td>
+              <td><a href="#array-contains">Array Contains</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#-card-index--struct-functions">:card_index: Struct functions</a>
+    <ul>
+      <li><a href="#cdim-index">cDim index</a></li>
+    </ul>
+  </li>
+  <li><a href="#-date--date-functions">:date: Date functions</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#utc-to-user-timezone">UTC to User timezone</a></td>
+              <td><a href="#day-of-week">Day of week</a></td>
+              <td><a href="#date-diff">Date Diff</a></td>
+              <td><a href="#date-add">Date Add</a></td>
+              <td><a href="#date-trunc">Date Trunc</a></td>
+              <td><a href="#hour-add">Hour Add</a></td>
+              <td><a href="#date-filters--single-day-">Date Filters (single day)</a></td>
+              <td><a href="#date-filters--range-">Date Filters (range)</a></td>
+              <td><a href="#get-week-begin-date">Get Week begin date</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#-alarm-clock--timestamp-functions">:alarm_clock: Timestamp functions</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#timestamp-to-date">Timestamp to date</a></td>
+              <td><a href="#epoch-unixtime-to-timestamp">EPOCH/Unixtime to Timestamp</a></td>
+              <td><a href="#timestamp-to-epoch-unixtime">Timestamp to EPOCH/Unixtime</a></td>
+              <td><a href="#get-hour">Get Hour</a></td>
+              <td><a href="#timestamp-filters--as-date-range-">Timestamp Filters (as date range)</a></td>
+              <td><a href="#timestamp-filters--as-time-range-">Timestamp Filters (as time range)</a></td>
+              <td><a href="#string-to-date">String to Date</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#-capital-abcd--string-functions">:capital_abcd: String functions</a>
+    <ul>
+      <li><a href="#concat">Concat</a></li>
+    </ul>
+  </li>
+  <li><a href="#-hash--hash-functions">:hash: Hash functions</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#hash-functions">Hash functions</a></td>
+              <td><a href="#hash-mod-functions">Hash mod functions</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#-link--aggregate-functions">:link: Aggregate functions</a></li>
+  <li><a href="#-musical-keyboard--grouping-sets--cube--rollup-functions">:musical_keyboard: Grouping Sets, Cube, Rollup functions</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#rollup">Rollup</a></td>
+              <td><a href="#cube">Cube</a></td>
+              <td><a href="#grouping-sets">Grouping Sets</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><small><i><a href="http://ecotrust-canada.github.io/markdown-toc/">Table of contents generated with markdown-toc</a></i></small></p>
+
+<h2 id="cyclone-array-functions">:cyclone: Array functions</h2>
+<h4 id="explode-array">Explode Array</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">--Example #1: Hits</span>
+<span class="c1">--inner join</span>
+<span class="n">Presto</span><span class="p">:</span> <span class="k">CROSS</span> <span class="k">JOIN</span> <span class="k">UNNEST</span><span class="p">(</span><span class="n">hits</span><span class="p">)</span>  <span class="k">as</span> <span class="n">hits_table</span><span class="p">(</span><span class="n">hit</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="k">LATERAL</span> <span class="k">VIEW</span> <span class="n">EXPLODE</span><span class="p">(</span><span class="n">hits</span><span class="p">)</span> <span class="n">hits_table</span> <span class="k">as</span> <span class="n">hit</span>
+<span class="c1">--outer join</span>
+<span class="n">Hive</span> <span class="k">outer</span> <span class="k">join</span><span class="p">:</span> <span class="k">LATERAL</span> <span class="k">VIEW</span> <span class="k">OUTER</span> <span class="n">EXPLODE</span><span class="p">(</span><span class="n">hits</span><span class="p">)</span> <span class="n">hits_table</span> <span class="k">as</span> <span class="n">hit</span>
+<span class="n">Presto</span><span class="p">:</span> <span class="c1">--No outer join equivalent in Presto</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">--Example #2: Custom Dimensions</span>
+<span class="c1">--inner join</span>
+<span class="n">Presto</span><span class="p">:</span> <span class="k">CROSS</span> <span class="k">JOIN</span> <span class="k">UNNEST</span><span class="p">(</span><span class="n">customdimensions</span><span class="p">)</span>  <span class="k">as</span> <span class="n">cd_table</span><span class="p">(</span><span class="n">cd</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="k">LATERAL</span> <span class="k">VIEW</span> <span class="n">EXPLODE</span><span class="p">(</span><span class="n">customdimensions</span><span class="p">)</span> <span class="n">hits_table</span> <span class="k">as</span> <span class="n">cd</span>
+<span class="c1">--outer join</span>
+<span class="n">Hive</span> <span class="k">outer</span> <span class="k">join</span><span class="p">:</span> <span class="k">LATERAL</span> <span class="k">VIEW</span> <span class="k">OUTER</span> <span class="n">EXPLODE</span><span class="p">(</span><span class="n">customdimensions</span><span class="p">)</span> <span class="n">hits_table</span> <span class="k">as</span> <span class="n">cd</span>
+<span class="n">Presto</span><span class="p">:</span> <span class="c1">--No outer join equivalent in Presto</span>
+</code></pre></div></div>
+<h4 id="array-size">Array Size</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span><span class="k">cardinality</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span><span class="k">size</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="array-to-string">Array to String</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">array_join</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="err">‘</span><span class="p">,</span><span class="err">’</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">concat_ws</span><span class="p">(</span><span class="err">‘</span><span class="p">,</span><span class="err">’</span><span class="p">,</span><span class="n">array</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="array-contains">Array Contains</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="k">contains</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">array_contains</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="n">element</span><span class="p">)</span>
+</code></pre></div></div>
+<h2 id="card_index-struct-functions">:card_index: Struct functions</h2>
+<h4 id="cdim-index">cDim index</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">exploded_cd</span><span class="p">.</span><span class="k">index</span><span class="o">=</span><span class="err">“</span><span class="mi">4</span><span class="nv">"
+Hive: exploded_cd.index=4
+</span></code></pre></div></div>
+<h2 id="date-date-functions">:date: Date functions</h2>
+<h4 id="utc-to-user-timezone">UTC to User timezone</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">at_timezone</span><span class="p">(</span><span class="n">cm</span><span class="p">.</span><span class="n">event_timestamp</span><span class="p">,</span><span class="n">users</span><span class="p">.</span><span class="n">timezone</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span><span class="n">from_utc_timestamp</span><span class="p">(</span><span class="n">cm</span><span class="p">.</span><span class="n">event_timestamp</span><span class="p">,</span><span class="n">users</span><span class="p">.</span><span class="n">timezone</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="day-of-week">Day of week</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">day_of_week</span><span class="p">(</span><span class="n">mydate</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="n">unix_timestamp</span><span class="p">(</span><span class="n">timestamp1</span><span class="p">),</span><span class="s1">'EEEE'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="date-diff">Date Diff</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">date_diff</span><span class="p">(</span><span class="s1">'day'</span><span class="p">,</span> <span class="n">timestamp1</span><span class="p">,</span> <span class="n">timestamp2</span><span class="p">)</span> <span class="c1">--supports week (starts on ??), month, quarter, year</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">datediff</span><span class="p">(</span><span class="n">string</span> <span class="n">enddate</span><span class="p">,</span> <span class="n">string</span> <span class="n">startdate</span><span class="p">)</span>
+<span class="n">Vertica</span><span class="p">:</span> <span class="n">datediff</span><span class="p">(</span><span class="s1">'day'</span><span class="p">,</span> <span class="n">timestamp1</span><span class="p">,</span> <span class="n">timestamp2</span><span class="p">)</span> <span class="c1">--supports week (starts on Sunday), month, quarter, year</span>
+</code></pre></div></div>
+<h4 id="date-add">Date Add</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">date_add</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="nb">timestamp</span><span class="p">)</span> 
+<span class="n">Hive</span><span class="p">:</span> <span class="n">date_add</span><span class="p">(</span><span class="nb">date</span><span class="o">/</span><span class="nb">timestamp</span><span class="o">/</span><span class="n">string</span> <span class="n">startdate</span><span class="p">,</span> <span class="nb">tinyint</span><span class="o">/</span><span class="nb">smallint</span><span class="o">/</span><span class="nb">int</span> <span class="n">days</span><span class="p">)</span>
+
+<span class="c1">--Example:</span>
+<span class="n">Presto</span><span class="p">:</span> <span class="n">date_add</span><span class="p">(</span><span class="err">‘</span><span class="k">day</span><span class="err">’</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="k">cast</span><span class="p">(</span><span class="n">created</span> <span class="k">as</span> <span class="nb">date</span><span class="p">))</span> 
+<span class="n">Hive</span><span class="p">:</span> <span class="n">date_add</span><span class="p">(</span><span class="n">created</span> <span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Vertica</span><span class="p">:</span> <span class="n">created</span><span class="o">+</span><span class="mi">1</span>  <span class="p">(</span><span class="k">or</span><span class="p">)</span>  <span class="err">‘</span><span class="mi">2016</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span><span class="err">’</span><span class="p">::</span><span class="nb">date</span> <span class="o">+</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<h4 id="date-trunc">Date Trunc</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">date_trunc</span><span class="p">(</span><span class="s1">'month'</span><span class="p">,</span> <span class="k">cast</span><span class="p">(</span><span class="s1">'2015-03-17'</span> <span class="k">as</span> <span class="nb">date</span><span class="p">))</span>    <span class="c1">-- Returns 2015-03-01. Supports timestamp input. Supports day, week, month, quarter, year, hour, minute, second, millisecond</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">trunc</span><span class="p">(</span><span class="s1">'2015-03-17'</span><span class="p">,</span> <span class="s1">'MM'</span><span class="p">)</span>    <span class="c1">-- Returns 2015-03-01. Supports date input only, Supports MM, YY</span>
+<span class="n">Vertica</span><span class="p">:</span> <span class="n">date_trunc</span><span class="p">(</span><span class="s1">'WEEK'</span><span class="p">,</span><span class="nb">date</span> <span class="s1">'2015-03-17'</span><span class="p">)</span> <span class="c1">--Return Week starts on Monday. Supports HOUR , MONTH, YEAR etc.,</span>
+</code></pre></div></div>
+<h4 id="hour-add">Hour Add</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">date_add</span><span class="p">(</span><span class="s1">'hour'</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="k">cast</span><span class="p">(</span><span class="n">created</span> <span class="k">as</span> <span class="nb">timestamp</span><span class="p">))</span> 
+<span class="n">Hive</span><span class="p">:</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="n">unix_timestamp</span><span class="p">(</span><span class="k">cast</span><span class="p">(</span><span class="n">created</span> <span class="k">as</span> <span class="nb">timestamp</span><span class="p">))</span> <span class="o">+</span> <span class="mi">25200</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="date-filters-single-day">Date Filters (single day)</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">--Case #1: When date is stored in a date column &amp; is non partition column:</span>
+<span class="n">Presto</span><span class="p">:</span> <span class="k">where</span> <span class="n">report</span> <span class="nb">date</span><span class="o">=</span><span class="nb">date</span> <span class="s1">'2017-06-05'</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="k">where</span> <span class="n">report_date</span><span class="o">=</span><span class="nb">date</span> <span class="s1">'2017-06-05'</span>  
+</code></pre></div></div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lang=sql
+--Case #2: When date is stored in a string column (partition date columns are internally treated as string)
+Presto: where cast(report_date as date)=date '2017-06-05'
+Hive: where datestr='2017-06-05’ 
+</code></pre></div></div>
+
+<h4 id="date-filters-range">Date Filters (range)</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">--Case #1: When date is stored in a date column &amp; is non partition column:</span>
+<span class="n">Presto</span><span class="p">:</span> <span class="k">where</span> <span class="n">report_date</span> <span class="k">between</span> <span class="nb">date</span> <span class="s1">'2017-06-05'</span>  <span class="k">and</span> <span class="nb">date</span> <span class="s1">'2017-06-06'</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="k">where</span> <span class="n">report_date</span> <span class="k">between</span> <span class="s1">'2017-06-05’  and  '</span><span class="mi">2017</span><span class="o">-</span><span class="mi">06</span><span class="o">-</span><span class="mi">06</span><span class="s1">' --Note: Presto syntax works too
+</span></code></pre></div></div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lang=sql
+--Case #2: When date is stored in a string column (partition date columns are internally treated as string)
+Presto: where cast(report_date as date) between cast('2017-06-05' as date)  and cast('2017-06-06' as date) 
+Hive: datestr between '2017-06-05’  and '2017-06-06’ 
+</code></pre></div></div>
+
+<h4 id="get-week-begin-date">Get Week begin date</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">date_trunc</span><span class="p">(</span><span class="s1">'week'</span><span class="p">,</span><span class="k">cast</span><span class="p">(</span><span class="n">datestr</span> <span class="k">as</span> <span class="nb">date</span><span class="p">))</span> <span class="n">week_beg_dt</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">date_sub</span><span class="p">(</span><span class="n">next_day</span><span class="p">(</span><span class="n">datestr</span><span class="p">,</span><span class="s1">'MO'</span><span class="p">),</span><span class="mi">7</span><span class="p">)</span> <span class="n">week_beg_dt</span>
+</code></pre></div></div>
+
+<h2 id="alarm_clock-timestamp-functions">:alarm_clock: Timestamp functions</h2>
+<h4 id="timestamp-to-date">Timestamp to date</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="k">cast</span><span class="p">(</span><span class="nb">timestamp</span> <span class="k">as</span> <span class="nb">date</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">to_date</span><span class="p">(</span><span class="nb">timestamp</span><span class="o">/</span><span class="n">string</span><span class="p">)</span>  <span class="c1">--Eg: to_date('2016-07-01 00:12:00'), to_date(current_timestamp)</span>
+<span class="n">Vertica</span><span class="p">:</span> <span class="n">to_date</span> <span class="p">(</span> <span class="n">expression</span> <span class="p">,</span> <span class="n">pattern</span> <span class="p">)</span> <span class="c1">--Eg: to_date('2016-07-01 00:12:00', 'YYYY-MM-DD HH24:MI:SS')</span>
+</code></pre></div></div>
+
+<h4 id="epochunixtime-to-timestamp">EPOCH/Unixtime to Timestamp</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="n">unixtime</span><span class="p">)</span> 
+<span class="n">Hive</span><span class="p">:</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="nb">bigint</span> <span class="n">unixtime</span><span class="p">[,</span> <span class="n">string</span> <span class="n">format</span><span class="p">])</span>
+</code></pre></div></div>
+
+<h4 id="timestamp-to-epochunixtime">Timestamp to EPOCH/Unixtime</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span><span class="n">to_unixtime</span><span class="p">(</span><span class="nb">timestamp</span><span class="p">)</span> 
+<span class="n">Hive</span><span class="p">:</span> <span class="n">unix_timestamp</span><span class="p">(</span><span class="n">string</span><span class="o">/</span><span class="nb">date</span><span class="o">/</span><span class="nb">timestamp</span><span class="p">)</span> <span class="c1">--Eg: unix_timestamp('2016-07-01 00:12:00'), unix_timestamp(current_date)</span>
+</code></pre></div></div>
+<h4 id="get-hour">Get Hour</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">hour</span><span class="p">(</span><span class="nb">timestamp</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">hour</span><span class="p">(</span><span class="nb">timestamp</span><span class="p">)</span>
+</code></pre></div></div>
+<h4 id="timestamp-filters-as-date-range">Timestamp Filters (as date range)</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="k">where</span> <span class="k">cast</span><span class="p">(</span><span class="n">rider_signup_succ_timestamp</span> <span class="k">as</span> <span class="nb">date</span><span class="p">)</span> <span class="k">between</span> <span class="nb">date</span> <span class="s1">'2017-06-01'</span> <span class="k">and</span> <span class="nb">date</span> <span class="s1">'2017-06-01'</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="k">where</span> <span class="n">to_date</span><span class="p">(</span><span class="n">rider_signup_succ_timestamp</span><span class="p">)</span> <span class="k">between</span> <span class="s1">'2017-06-01'</span> <span class="k">and</span> <span class="s1">'2017-06-02'</span>
+</code></pre></div></div>
+
+<h4 id="timestamp-filters-as-time-range">Timestamp Filters (as time range)</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="k">cast</span><span class="p">(</span><span class="n">date_parse</span><span class="p">(</span><span class="n">created</span><span class="p">,</span><span class="s1">'%Y-%m-%d %H:%i:%s'</span><span class="p">)</span> <span class="k">as</span> <span class="nb">date</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="n">unix_timestamp</span><span class="p">(</span><span class="n">created</span><span class="p">,</span><span class="s1">'yyyy-MM-dd'</span><span class="p">)</span> <span class="p">,</span><span class="s1">'yyyy-MM-dd'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="string-to-date">String to Date</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">--"created" is formatted as String, and it looks like "2017-10-13 18:48:12"</span>
+
+<span class="n">Presto</span><span class="p">:</span>  <span class="k">cast</span><span class="p">(</span><span class="n">date_parse</span><span class="p">(</span><span class="n">created</span><span class="p">,</span><span class="s1">'%Y-%m-%d %H:%i:%s'</span><span class="p">)</span> <span class="k">as</span> <span class="nb">date</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">from_unixtime</span><span class="p">(</span><span class="n">unix_timestamp</span><span class="p">(</span><span class="n">created</span><span class="p">,</span><span class="s1">'yyyy-MM-dd'</span><span class="p">)</span> <span class="p">,</span><span class="s1">'yyyy-MM-dd'</span><span class="p">)</span> 
+</code></pre></div></div>
+
+<h2 id="capital_abcd-string-functions">:capital_abcd: String functions</h2>
+<h4 id="concat">Concat</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">concat</span><span class="p">(</span><span class="n">strcol1</span><span class="p">,</span><span class="n">strcol2</span><span class="p">,..)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">concat</span><span class="p">(</span><span class="n">strcol1</span><span class="p">,</span><span class="n">strcol2</span><span class="p">,..)</span>
+</code></pre></div></div>
+<h2 id="hash-hash-functions">:hash: Hash functions</h2>
+<h4 id="hash-functions">Hash functions</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">--MD5</span>
+<span class="n">Presto</span><span class="p">:</span> <span class="n">md5</span><span class="p">(</span><span class="n">concat</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span><span class="s1">'yourseed'</span><span class="p">))</span>
+<span class="n">Vertica</span><span class="p">:</span> <span class="n">md5</span><span class="p">(</span><span class="n">concat</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span><span class="s1">'yourseed'</span><span class="p">))</span>
+
+<span class="c1">--SHA32</span>
+<span class="n">Presto</span><span class="p">:</span> <span class="n">sha32</span><span class="p">(</span><span class="n">concat</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span><span class="s1">'yourseed'</span><span class="p">))</span>
+<span class="n">Vertica</span><span class="p">:</span> <span class="n">sha32</span><span class="p">(</span><span class="n">concat</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span><span class="s1">'yourseed'</span><span class="p">))</span>
+
+</code></pre></div></div>
+
+<h4 id="hash-mod-functions">Hash mod functions</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">--MD5</span>
+<span class="n">Presto</span><span class="p">:</span> 
+<span class="n">Vertica</span><span class="p">:</span> <span class="n">hex_to_integer</span><span class="p">(</span><span class="k">right</span><span class="p">(</span><span class="n">md5</span><span class="p">(</span><span class="n">concat</span><span class="p">(</span><span class="n">user_uuid</span><span class="p">,</span><span class="s1">'yourseed'</span><span class="p">)),</span><span class="mi">15</span><span class="p">))</span><span class="o">%</span><span class="mi">100</span> <span class="p">.</span> <span class="c1">--Creates 100 bins</span>
+</code></pre></div></div>
+
+<h2 id="link-aggregate-functions">:link: Aggregate functions</h2>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="n">approx_percentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">percentage</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">percentage</span><span class="p">)</span>
+<span class="n">Vertica</span><span class="p">:</span> <span class="n">approximate_percentile</span><span class="p">(</span><span class="n">x</span> <span class="k">USING</span> <span class="k">PARAMETERS</span> <span class="n">percentile</span><span class="o">=</span><span class="n">percentage</span><span class="p">)</span> 
+</code></pre></div></div>
+
+<h2 id="musical_keyboard-grouping-sets-cube-rollup-functions">:musical_keyboard: Grouping Sets, Cube, Rollup functions</h2>
+<h4 id="rollup">Rollup</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="k">ROLLUP</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="n">col3</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="n">col3</span> <span class="k">WITH</span> <span class="k">ROLLUP</span>
+</code></pre></div></div>
+
+<h4 id="cube">Cube</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="k">CUBE</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="n">col3</span><span class="p">)</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="n">col3</span> <span class="k">WITH</span> <span class="k">CUBE</span>
+</code></pre></div></div>
+
+<h4 id="grouping-sets">Grouping Sets</h4>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Presto</span><span class="p">:</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="k">GROUPING</span> <span class="k">SETS</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">),</span> <span class="p">(</span><span class="n">col2</span><span class="p">,</span><span class="n">col3</span><span class="p">))</span>
+<span class="n">Hive</span><span class="p">:</span> <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">col1</span><span class="p">,</span> <span class="n">col2</span><span class="p">,</span> <span class="n">col3</span> <span class="k">WITH</span> <span class="k">GROUPING</span> <span class="k">SETS</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span> <span class="p">(</span><span class="n">col1</span><span class="p">,</span><span class="n">col2</span><span class="p">),</span> <span class="p">(</span><span class="n">col2</span><span class="p">,</span> <span class="n">col3</span><span class="p">))</span>
+</code></pre></div></div>
