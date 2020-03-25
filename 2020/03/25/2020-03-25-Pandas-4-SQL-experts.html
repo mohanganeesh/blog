@@ -1,5 +1,168 @@
 <h1 id="pandas-reference-for-sql-experts">Pandas Reference for SQL Experts</h1>
 
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+  <li><a href="#dataframe">DataFrame</a>
+    <ul>
+      <li><a href="#creating-a-dataframe">Creating a DataFrame</a></li>
+    </ul>
+  </li>
+  <li><a href="#datatypes--conversions">Datatypes &amp; conversions</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#get-data-types-for-each-column-in-a-data-frame">Get data types for each column in a data frame</a></td>
+              <td><a href="#convert-stringobject-to-numeric">Convert string/object to numeric</a></td>
+              <td><a href="#other-conversions">Other conversions</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#select-columns">Select columns</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#simple-select">Simple select</a></td>
+              <td><a href="#select-from-multi-level-index-using-tuples">Select from multi-level index using tuples</a></td>
+              <td><a href="#creating-multi-level-index-using-tuples">Creating multi-level index using tuples</a></td>
+              <td><a href="#programmatically-select-columns">Programmatically select columns</a></td>
+              <td><a href="#get-distribution-of-values-in-a-column">Get distribution of values in a column</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#filter-rows">Filter rows</a></li>
+  <li><a href="#sort">Sort</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#sort-rows">Sort rows</a></td>
+              <td><a href="#sort-columns">Sort columns</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#group-by">Group by</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#group-by-example">Group by example</a></td>
+              <td><a href="#aggregate-functions">Aggregate functions</a></td>
+              <td><a href="#transform-functions">Transform functions</a></td>
+              <td><a href="#group-filters-sqlhaving">Group Filters (SQL:having)</a></td>
+              <td><a href="#simple-cumulative">Simple Cumulative</a></td>
+              <td><a href="#expanding-window">Expanding Window</a></td>
+              <td><a href="#rolling-window">Rolling Window</a></td>
+              <td><a href="#leadlag">Lead/Lag</a></td>
+              <td><a href="#resample">Resample</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#joins">Joins</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#simple-join">Simple join</a></td>
+              <td><a href="#concat-columns">Concat columns</a></td>
+              <td><a href="#sql-like-join">SQL like join</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#formatting">Formatting</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#numeric-formating">Numeric formating</a></td>
+              <td><a href="#gradient-background">Gradient Background</a></td>
+              <td><a href="#bars">Bars</a></td>
+              <td><a href="#nesting-multiple-styles">Nesting multiple styles</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#transform">Transform</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#swap-level--axis">Swap level &amp; Axis</a></td>
+              <td><a href="#map">Map</a></td>
+              <td><a href="#apply">Apply</a></td>
+              <td><a href="#flatten-multi-level-column-index">Flatten multi-level column index</a></td>
+              <td><a href="#pivot-index-levels-to-column">Pivot index levels to column</a></td>
+              <td><a href="#binning-based-on-value-cut">Binning based on value (cut)</a></td>
+              <td><a href="#binning-based-on-records-qcut">Binning based on records (qcut)</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#addremove-rows--columns">Add/Remove rows &amp; columns</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#add-rows">Add Rows</a></td>
+              <td><a href="#add-columns">Add columns</a></td>
+              <td><a href="#remove-rows">Remove rows</a></td>
+              <td><a href="#remove-columns">Remove columns</a></td>
+              <td><a href="#remove-a-level-from-multi-level-index">Remove a level from multi-level index</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#visualizations">Visualizations</a>
+    <ul>
+      <li>
+        <table>
+          <tbody>
+            <tr>
+              <td><a href="#simple-charts">Simple charts</a></td>
+              <td><a href="#histogram">Histogram</a></td>
+              <td><a href="#boxplot-for-each-group">Boxplot for each group</a></td>
+              <td><a href="#scatter-matrix">Scatter Matrix</a></td>
+              <td><a href="#bootstrap-plot">Bootstrap Plot</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><small><i><a href="http://ecotrust-canada.github.io/markdown-toc/">Table of contents generated with markdown-toc</a></i></small></p>
+
 <h2 id="dataframe">DataFrame</h2>
 <p>You can think of DataFrame like a spreadsheet or SQL table. It is the most commonly used pandas object. 
 Rows are referred to as axis 0 and columns as axis 1 and each axis can have multiple levels (which is not common).</p>
